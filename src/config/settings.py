@@ -44,7 +44,7 @@ class Redis(BaseModel):
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=(BASE_DIR / ".env.template", BASE_DIR / ".env"),
+        env_file=(BASE_DIR / ".env"),
         case_sensitive=False,
         env_nested_delimiter="__",
         frozen=True,
