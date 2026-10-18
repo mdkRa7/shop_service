@@ -1,18 +1,11 @@
-from sqlalchemy import String, text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped
 
 from infrastructure.database import Base
 
-from .mixins import CreatedAtMixin, IdPkMixin, UpdatedAtMixin
+from .mixins import CreatedAtMixin, IdPkMixin, IsActiveMixin, NameMixin, UpdatedAtMixin
 
 
-class Filling(IdPkMixin, CreatedAtMixin, UpdatedAtMixin, Base):
-    name: Mapped[str] = mapped_column(
-        String(100),
-        unique=True,
-    )
+class Filling(
+    IdPkMixin, CreatedAtMixin, UpdatedAtMixin, NameMixin, IsActiveMixin, Base
+):
     price_per_kg: Mapped[int]
-    is_active: Mapped[bool] = mapped_column(
-        default=True,
-        server_default=text("true"),
-    )
