@@ -2,18 +2,20 @@ import logging
 import uuid
 from collections.abc import Iterator
 from contextlib import contextmanager
-from typing import Any
+from typing import Any, Sequence
 
 from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from application.exceptions import DatabaseError, IntegrityConstraintError, NotFoundError
+from application.exceptions import (
+    DatabaseError,
+    IntegrityConstraintError,
+    NotFoundError,
+)
 from infrastructure.database.base import Base
 
-
 log = logging.getLogger(__name__)
-
 
 
 class BaseRepository[ModelT: Base]:
@@ -27,14 +29,23 @@ class BaseRepository[ModelT: Base]:
         try:
             yield
         except IntegrityError as e:
-            log.warning("Integrity error in %s.%s: %s", self.model.__name__, operation, e.orig)
+            log.warning(
+                "Integrity error in %s.%s: %s", self.model.__name__, operation, e.orig
+            )
             raise IntegrityConstraintError() from e
         except SQLAlchemyError as e:
             log.exception("DB error in %s.%s", self.model.__name__, operation)
             raise DatabaseError() from e
 
+    async def get_all(self, *where: Any, order_by: Sequence[Any] = ()) -> list[ModelT]:
+        with self._db_errors("get_all"):
+            stmt = select(self.model).where(*where).order_by(*order_by)
+            res = await self._session.scalars(stmt)
+            return list(res)
+
     async def get(self, obj_id: uuid.UUID) -> ModelT | None:
         with self._db_errors("get"):
+
             return await self._session.get(self.model, obj_id)
 
     async def get_or_raise(self, obj_id: uuid.UUID) -> ModelT:
@@ -57,7 +68,9 @@ class BaseRepository[ModelT: Base]:
             await self._session.flush()
             return obj
 
-    async def update_by_id(self, obj_id: uuid.UUID, data: dict[str, Any]) -> ModelT | None:
+    async def update_by_id(
+        self, obj_id: uuid.UUID, data: dict[str, Any]
+    ) -> ModelT | None:
         with self._db_errors("update_by_id"):
             stmt = (
                 update(self.model)
@@ -66,7 +79,6 @@ class BaseRepository[ModelT: Base]:
                 .returning(self.model)
             )
             return await self._session.scalar(stmt)
-
 
     async def delete(self, obj: ModelT) -> None:
         with self._db_errors("delete"):
