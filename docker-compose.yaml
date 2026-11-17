@@ -11,8 +11,8 @@ services:
     depends_on:
       pg:
         condition: service_healthy
-      redis:
-        condition: service_healthy
+#      redis:
+#        condition: service_healthy
     develop:
       watch:
         - action: sync+restart
@@ -37,17 +37,17 @@ services:
       timeout: 3s
       retries: 3
 
-  redis:
-    image: redis:7-alpine
-    ports:
-      - 127.0.0.1:6379:6379
-    volumes:
-      - app_redis:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      retries: 3
-      timeout: 3s
+#  redis:
+#    image: redis:7-alpine
+#    ports:
+#      - 127.0.0.1:6379:6379
+#    volumes:
+#      - app_redis:/data
+#    healthcheck:
+#      test: ["CMD", "redis-cli", "ping"]
+#      interval: 5s
+#      retries: 3
+#      timeout: 3s
 
 volumes:
   app_db:
