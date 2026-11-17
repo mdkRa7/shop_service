@@ -10,6 +10,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 class ApiPrefix(BaseModel):
     v1_prefix: str = "/v1"
     healthcheck: str = "/healthcheck"
+    fillings: str = "/fillings"
+    decorations: str = "/decorations"
+    orders: str = "/orders"
 
 
 class ApiConf(BaseModel):
