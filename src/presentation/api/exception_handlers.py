@@ -6,9 +6,13 @@ from fastapi.responses import JSONResponse
 from application.exceptions import (
     AppError,
     DatabaseError,
+    DayFullError,
     IntegrityConstraintError,
+    InvalidDateRangeError,
     InvalidTokenTypeError,
     NotFoundError,
+    PickupDateTooSoonError,
+    PriceMismatchError,
     TokenValidationError,
 )
 
@@ -21,6 +25,10 @@ ERROR_STATUS: dict[type[AppError], int] = {
     NotFoundError: status.HTTP_404_NOT_FOUND,
     IntegrityConstraintError: status.HTTP_409_CONFLICT,
     DatabaseError: status.HTTP_500_INTERNAL_SERVER_ERROR,
+    PriceMismatchError: status.HTTP_409_CONFLICT,
+    PickupDateTooSoonError: status.HTTP_422_UNPROCESSABLE_ENTITY,
+    DayFullError: status.HTTP_409_CONFLICT,
+    InvalidDateRangeError: status.HTTP_422_UNPROCESSABLE_ENTITY,
 }
 
 
