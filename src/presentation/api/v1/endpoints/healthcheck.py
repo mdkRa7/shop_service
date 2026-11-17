@@ -1,12 +1,12 @@
-from config import settings
 from fastapi import APIRouter
+
+from config import settings
 
 router = APIRouter(prefix=settings.api_prefix.healthcheck, tags=["Healthcheck"])
 
 
-@router.get("/healthcheck")
+@router.get("")
 async def healthcheck():
     return {
         "message": "success",
     }
-
