@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from sqlalchemy import Date
 from sqlalchemy import Enum as SAlchemyEnum
-from sqlalchemy import ForeignKey, Numeric, String, text
+from sqlalchemy import ForeignKey, Identity, Numeric, String, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from domain.enums import OrderStatus
@@ -15,6 +15,7 @@ from .mixins import CreatedAtMixin, IdPkMixin, UpdatedAtMixin
 
 class Order(IdPkMixin, CreatedAtMixin, UpdatedAtMixin, Base):
     user_id: Mapped[uuid.UUID] = mapped_column(index=True)
+    number: Mapped[int] = mapped_column(Identity(), unique=True)
     customer_name: Mapped[str] = mapped_column(String(100))
     inscription: Mapped[str | None] = mapped_column(
         String(100),
