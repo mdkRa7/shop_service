@@ -6,10 +6,21 @@ from decimal import Decimal
 from domain.enums import OrderStatus
 
 
+# @dataclass(frozen=True, slots=True)
+# class BaseOrderDTO:
+#     user_id: uuid.UUID
+#     filling_id: uuid.UUID
+#     decoration_id: uuid.UUID | None
+#     weight_kg: Decimal
+#     phone: str
+#     customer_name: str
+#     inscription: str | None
+#     pickup_date: date
 @dataclass(frozen=True, slots=True)
 class BaseOrderDTO:
     user_id: uuid.UUID
-    filling_id: uuid.UUID
+    recipe_id: uuid.UUID | None
+    filling_id: uuid.UUID | None
     decoration_id: uuid.UUID | None
     weight_kg: Decimal
     phone: str
@@ -37,7 +48,8 @@ class OrderListItemDTO:
     id: uuid.UUID
     number: int
     customer_name: str
-    filling_name: str
+    recipe_name: str | None
+    filling_name: str | None
     pickup_date: date
     status: OrderStatus
 
@@ -45,7 +57,7 @@ class OrderListItemDTO:
 @dataclass(frozen=True, slots=True)
 class OrderListDTO:
     total: int
-    items: list[OutputOrderDTO]
+    items: list[OrderListItemDTO]
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -54,7 +66,8 @@ class OrderDetailDTO:
     number: int
     customer_name: str
     phone: str
-    filling_name: str
+    filling_name: str | None
+    recipe_name: str | None
     decoration_name: str | None
     weight_kg: Decimal
     inscription: str | None

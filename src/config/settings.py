@@ -13,6 +13,7 @@ class ApiPrefix(BaseModel):
     fillings: str = "/fillings"
     decorations: str = "/decorations"
     orders: str = "/orders"
+    recipes: str = "/recipes"
 
 
 class ApiConf(BaseModel):

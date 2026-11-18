@@ -47,6 +47,7 @@ async def get_total_price(
         weight_kg=data.weight_kg,
         filling_id=data.filling_id,
         decoration_id=data.decoration_id,
+        recipe_id=data.recipe_id,
     )
 
 

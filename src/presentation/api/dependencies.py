@@ -13,14 +13,23 @@ from application.use_cases import (
     ListMyOrders,
 )
 from application.use_cases.get_availability import GetAvailability
+from application.use_cases.get_dashboard_summary import GetDashboardSummary
 from application.use_cases.get_order_detail import GetOrderDetail
 from application.use_cases.list_admin_routers import ListOrders
+from application.use_cases.recipes import (
+    CreateRecipe,
+    DeleteRecipe,
+    GetRecipe,
+    GetRecipes,
+    UpdateRecipe,
+)
 from application.use_cases.update_order_status import UpdateOrderStatus
 from infrastructure.database import get_session
 from infrastructure.database.repositories import (
     DecorationRepository,
     FillingRepository,
     OrderRepository,
+    RecipeRepository,
 )
 from infrastructure.security.jwt import check_access_token
 
@@ -39,9 +48,14 @@ def get_order_repo(session: SessionDep):
     return OrderRepository(session)
 
 
+def get_recipe_repo(session: SessionDep):
+    return RecipeRepository(session)
+
+
 FillingRepoDep = Annotated[FillingRepository, Depends(get_filling_repo)]
 DecorationRepoDep = Annotated[DecorationRepository, Depends(get_decoration_repo)]
 OrderRepoDep = Annotated[OrderRepository, Depends(get_order_repo)]
+RecipeRepoDep = Annotated[RecipeRepository, Depends(get_recipe_repo)]
 
 
 def get_access_token(
@@ -84,11 +98,13 @@ def get_add_order_use_case(
     order_repo: OrderRepoDep,
     decoration_repo: DecorationRepoDep,
     filling_repo: FillingRepoDep,
+    recipe_repo: RecipeRepoDep,
 ) -> AddOrder:
     return AddOrder(
         order_repo=order_repo,
         filling_repo=filling_repo,
         decoration_repo=decoration_repo,
+        recipe_repo=recipe_repo,
     )
 
 
@@ -115,8 +131,9 @@ def get_order_detail_use_case(repo: OrderRepoDep) -> GetOrderDetail:
 def calculate_total_price_use_case(
     filling_repo: FillingRepoDep,
     decoration_repo: DecorationRepoDep,
+    recipe_repo: RecipeRepoDep,
 ) -> CalculateTotalPrice:
-    return CalculateTotalPrice(filling_repo, decoration_repo)
+    return CalculateTotalPrice(filling_repo, decoration_repo, recipe_repo)
 
 
 def get_list_orders_use_case(repo: OrderRepoDep) -> ListOrders:
@@ -127,6 +144,41 @@ def get_update_order_status_use_case(repo: OrderRepoDep) -> UpdateOrderStatus:
     return UpdateOrderStatus(repo)
 
 
+def get_dashboard_summary_use_case(repo: OrderRepoDep) -> GetDashboardSummary:
+    return GetDashboardSummary(repo)
+
+
+RecipeRepoDep = Annotated[RecipeRepository, Depends(get_recipe_repo)]
+
+
+def get_recipes_use_case(repo: RecipeRepoDep) -> GetRecipes:
+    return GetRecipes(repo)
+
+
+def get_recipe_use_case(repo: RecipeRepoDep) -> GetRecipe:
+    return GetRecipe(repo)
+
+
+def create_recipe_use_case(repo: RecipeRepoDep) -> CreateRecipe:
+    return CreateRecipe(repo)
+
+
+def update_recipe_use_case(repo: RecipeRepoDep) -> UpdateRecipe:
+    return UpdateRecipe(repo)
+
+
+def delete_recipe_use_case(repo: RecipeRepoDep) -> DeleteRecipe:
+    return DeleteRecipe(repo)
+
+
+GetRecipesDep = Annotated[GetRecipes, Depends(get_recipes_use_case)]
+GetRecipeDep = Annotated[GetRecipe, Depends(get_recipe_use_case)]
+CreateRecipeDep = Annotated[CreateRecipe, Depends(create_recipe_use_case)]
+UpdateRecipeDep = Annotated[UpdateRecipe, Depends(update_recipe_use_case)]
+DeleteRecipeDep = Annotated[DeleteRecipe, Depends(delete_recipe_use_case)]
+GetDashboardSummaryDep = Annotated[
+    GetDashboardSummary, Depends(get_dashboard_summary_use_case)
+]
 UpdateOrderStatusDep = Annotated[
     UpdateOrderStatus, Depends(get_update_order_status_use_case)
 ]

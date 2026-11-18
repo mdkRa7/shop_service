@@ -1,2 +1,3 @@
 from .active_protocol import ActiveRepositoryProtocol
 from .order_protocol import OrderRepositoryProtocol
+from .recipe_protocol import RecipeRepositoryProtocol

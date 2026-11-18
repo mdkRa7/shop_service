@@ -2,7 +2,7 @@ import uuid
 from datetime import date
 from decimal import Decimal
 
-from sqlalchemy import Date
+from sqlalchemy import CheckConstraint, Date
 from sqlalchemy import Enum as SAlchemyEnum
 from sqlalchemy import ForeignKey, Identity, Numeric, String, text
 from sqlalchemy.orm import Mapped, mapped_column
@@ -21,7 +21,8 @@ class Order(IdPkMixin, CreatedAtMixin, UpdatedAtMixin, Base):
         String(100),
     )
     phone: Mapped[str] = mapped_column(String(20))
-    filling_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("fillings.id"))
+    filling_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("fillings.id"))
+    recipe_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("recipes.id"))
     decoration_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("decorations.id")
     )
@@ -32,4 +33,12 @@ class Order(IdPkMixin, CreatedAtMixin, UpdatedAtMixin, Base):
         SAlchemyEnum(OrderStatus, values_callable=lambda x: [e.value for e in x]),
         default=OrderStatus.NEW,
         server_default=OrderStatus.NEW,
+    )
+
+    __table_args__ = (
+        CheckConstraint(
+            "(recipe_id IS NOT NULL AND filling_id IS NULL AND decoration_id IS NULL)"
+            " OR (recipe_id IS NULL AND filling_id IS NOT NULL)",
+            name="kind",
+        ),
     )
