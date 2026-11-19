@@ -44,7 +44,7 @@ class AddOrder:
         decoration_price = Decimal("0")
 
         if dto.recipe_id is not None:
-            recipe = await self._recipe_repo.get_or_raise(dto.recipe_id)
+            recipe = await self._recipe_repo.get_active_by_id(dto.recipe_id)
 
             price_per_kg = recipe.price
 

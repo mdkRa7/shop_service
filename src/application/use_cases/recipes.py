@@ -20,7 +20,7 @@ class GetRecipes:
         self._repo = repo
 
     async def execute(self) -> list[RecipeDTO]:
-        recipes = await self._repo.get_all()
+        recipes = await self._repo.get_all_active()
         recipes.sort(key=lambda r: r.created_at, reverse=True)
         return [_to_dto(r) for r in recipes]
 
@@ -30,7 +30,7 @@ class GetRecipe:
         self._repo = repo
 
     async def execute(self, recipe_id: uuid.UUID) -> RecipeDTO:
-        return _to_dto(await self._repo.get_or_raise(recipe_id))
+        return _to_dto(await self._repo.get_active_by_id(recipe_id))
 
 
 class CreateRecipe:
@@ -57,5 +57,5 @@ class DeleteRecipe:
         self._repo = repo
 
     async def execute(self, recipe_id: uuid.UUID) -> None:
-        recipe = await self._repo.get_or_raise(recipe_id)
-        await self._repo.delete(recipe)
+        recipe = await self._repo.get_active_by_id(recipe_id)
+        await self._repo.update(recipe, {"is_active": False})

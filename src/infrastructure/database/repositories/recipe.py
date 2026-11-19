@@ -1,7 +1,7 @@
 from infrastructure.database.models import Recipe
 
-from .base import BaseRepository
+from .active import ActiveRepository
 
 
-class RecipeRepository(BaseRepository[Recipe]):
+class RecipeRepository(ActiveRepository[Recipe]):
     model = Recipe

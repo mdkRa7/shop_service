@@ -47,7 +47,7 @@ class CalculateTotalPrice:
     ) -> TotalPriceDTO:
 
         if recipe_id is not None:
-            recipe = await self._recipe_repo.get_or_raise(recipe_id)
+            recipe = await self._recipe_repo.get_active_by_id(recipe_id)
 
             total_price = calculate_total_price(
                 weight_kg=weight_kg,

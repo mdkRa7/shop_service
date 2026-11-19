@@ -5,10 +5,10 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from infrastructure.database import Base
 
-from .mixins import CreatedAtMixin, IdPkMixin, UpdatedAtMixin
+from .mixins import CreatedAtMixin, IdPkMixin, IsActiveMixin, UpdatedAtMixin
 
 
-class Recipe(IdPkMixin, CreatedAtMixin, UpdatedAtMixin, Base):
+class Recipe(IdPkMixin, CreatedAtMixin, UpdatedAtMixin, IsActiveMixin, Base):
     name: Mapped[str] = mapped_column(String(100), unique=True)
     description: Mapped[str] = mapped_column(Text)
     price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
